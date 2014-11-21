@@ -34,7 +34,7 @@ Data was processed by the `run_analysis.R` script.
 * The measurements from the smartphones are originally in the domain of `Time`. A Fourier transform moves it to the `Frequency` domain.
 
 `OriginOfEffect`
-* Whether the measurement reflects the effects of gravity or motion by the subject.
+* Whether the measurement reflects the effects of `Gravity` or `Body` (motion by the subject).
 * `Body` is obtained by subtracting the effects of `Gravity` from the raw data.
 
 `Source`
