@@ -45,10 +45,14 @@ Data was processed by the `run_analysis.R` script.
 `Statistic`
 * Either the `mean` or `std` (standard deviation) of the raw data.
 
-`Type`
+`Axis`
 * Measurements by the device are done in the `X`, `Y`, or `Z` axis.
-* `Mag` (magnitudes) are calculated using the euclidian norm.
-* `Jerk` signals are from the linear acceleration and angular velocity derived in time
+* `Mag` (magnitudes) are calculated using the euclidian norm of the three axes.
+
+`Jerk`
+* Some of the measurements are from the linear acceleration and angular velocity derived in time, and represent extra processing to obtain "Jerk" signals.
+* `Jerk` means this measurement had this extra processing.
+* a blank field ("` `") means no such processing was done.
 
 `Average`
 * **Units** depend on the `Source` (see `Source`)
