@@ -13,7 +13,10 @@ X = rbind(xtrain, xtest)
 y = rbind(ytrain, ytest)
 subjects = rbind(subjectTrain, subjectTest)
 
-# Extracts only the measurements on the mean and standard deviation for each measurement.
+# remove unused tables
+rm(xtrain, xtest, ytrain, ytest, subjectTrain, subjectTest)
+
+# 1. Extracts only the measurements on the mean and standard deviation for each measurement.
 features = read.table("./UCI HAR Dataset/features.txt", stringsAsFactors=F)
 features = features[,2]
 meanAndStdCol = grep("mean\\(\\)|std\\(\\)", features)
@@ -26,13 +29,14 @@ features = gsub("\\(\\)", "", features)
 features = gsub("-","",features)
 # Put in underscores to separate different variables
 features = gsub(
-    "^(t|f)(Body|Gravity)(Acc|Gyro)(Jerk|JerkMag|Mag)?(mean|std)([:alpha:]*)",
-    "\\1_\\2_\\3_\\5_\\4\\6",features)
+    "^(t|f)(Body|Gravity)(Acc|Gyro)(Jerk)?(Mag)?(mean|std)(X|Y|Z)?",
+    "\\1_\\2_\\3_\\6_\\7\\5_\\4",features)
+features = gsub("_$", "_ ", features)
 
 # label variables
 names(X) = features
 
-# Uses descriptive activity names to name the activities in the data set
+# 2. Uses descriptive activity names to name the activities in the data set
 activityLabels = read.table("./UCI HAR Dataset/activity_labels.txt", stringsAsFactors=F)
 activityLabels = tolower(activityLabels[,2])
 activityLabels = sub("_", " ", activityLabels)
@@ -43,12 +47,13 @@ names(y) = "Activity"
 names(subjects) = "SubjectID"
 X = cbind(subjects,y,X) # join everything together
 
+# 3. Appropriately labels the data set with descriptive variable names.
 require(dplyr)
 require(tidyr)
 X = tbl_df(X) # convert to data table
 X = X %>% gather(M,Value,-SubjectID,-Activity) %>%
     separate(M,
-             c("Domain","OriginOfEffect","Source","Statistic","Type"),
+             c("Domain","OriginOfEffect","Source","Statistic","Axis","Jerk"),
              sep="_",
              remove=T) %>%
     mutate(Domain = ifelse(Domain=="t","Time","Frequency")) %>%
@@ -58,7 +63,7 @@ X = X %>% gather(M,Value,-SubjectID,-Activity) %>%
 # From the data set in step 4, creates a second, independent tidy data set 
 # with the average of each variable for each activity and each subject.
 X2 = X %>%
-    group_by(SubjectID,Activity,Domain,OriginOfEffect,Source,Statistic,Type) %>%
+    group_by(SubjectID,Activity,Domain,OriginOfEffect,Source,Statistic,Axis,Jerk) %>%
     summarise(Average = mean(Value))
 
 write.table(X2,"TidyData.txt",row.names=F)
